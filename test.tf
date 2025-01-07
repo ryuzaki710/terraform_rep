@@ -38,21 +38,13 @@ resource "aws_vpc" "Terravpc" {
 
 resource "aws_subnet" "Terra_Subnet_pub1" {
   vpc_id     = "${aws_vpc.Terravpc.id}"
-  cidr_block = "${var.subnet_pub_1_cidr}"
-
+  cidr_block = "10.0.${count.index}.0/24"								#"${var.subnet_pub_1_cidr}"
+  count=2
   tags = {
-    Name = "Subnet1_pub"
+    Name = "Subnet_${count.index}_pub"
   }
 }
 
-resource "aws_subnet" "Terra_Subnet_pub2" {
-  vpc_id     = "${aws_vpc.Terravpc.id}"
-  cidr_block = "${var.subnet_pub_2_cidr}"
-
-  tags = {
-    Name = "Subnet2_pub"
-  }
-}
 
 resource "aws_internet_gateway" "IGW_Terra" {
   vpc_id = "${aws_vpc.Terravpc.id}"
@@ -100,11 +92,10 @@ resource "aws_instance" "terr_instance" {
   ami           = "${var.instance_ami}" 		# Replace with the desired AMI ID of the region/AZ
   instance_type = "${var.instance_type}"
   count = "${var.instance_count}"					#4 						#This will launch 4 servers with same configuration
-  subnet_id= "${aws_subnet.Terra_Subnet_pub1.id}"
+  subnet_id= "${aws_subnet.Terra_Subnet_pub1[count.index].id}"
   key_name = "${var.instance_key}"
   security_groups = [aws_security_group.vpc_SG.id] ##This is the syntax for calling SG ,don't use interpolation here.
   tags = {
-    Name = "Terraform Instance"
+    Name = "Ter_Inst_${count.index}"
   }
 }
-

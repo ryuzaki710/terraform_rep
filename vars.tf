@@ -22,12 +22,12 @@ variable "subnet_pub_2_cidr" {
 
 variable "instance_type" {
   
-  default = "t2.small"
+  default = "t2.micro"
 }
 
 variable "instance_count" {
 
-  default = 1
+  default = 2
 }
 
 variable "instance_key" {
